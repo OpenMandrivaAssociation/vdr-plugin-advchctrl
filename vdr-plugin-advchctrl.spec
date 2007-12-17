@@ -14,7 +14,6 @@ URL:		http://www.vdr-wiki.de/wiki/index.php/Advchctrl-plugin
 Source:		vdr-%plugin-%version.tar.bz2
 Patch1:		advchctrl-0.0.5-1.3.38.diff
 Patch2:		advchctrl-0.0.5-warnings.diff
-BuildRoot:	%{_tmppath}/%{name}-buildroot
 BuildRequires:	vdr-devel >= 1.4.1-6
 Requires:	vdr-abi = %vdr_abi
 
