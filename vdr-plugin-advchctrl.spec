@@ -2,7 +2,7 @@
 %define plugin	advchctrl
 %define name	vdr-plugin-%plugin
 %define version	0.0.5
-%define rel	12
+%define rel	13
 
 Summary:	VDR plugin: Advanced Channel Control
 Name:		%name
