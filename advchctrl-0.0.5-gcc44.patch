@@ -1,0 +1,20 @@
+Index: advchctrl-0.0.5/advchctrlchannel.c
+===================================================================
+--- advchctrl-0.0.5/advchctrlchannel.c
++++ advchctrl-0.0.5/advchctrlchannel.c	2009-07-27 15:42:21.990844975 +0300
+@@ -28,13 +28,13 @@
+     char *p = strchr ( s, ':');
+     if (p) 
+     {
+-	const char *Name = compactspace(p + 1);
++	char *Name = compactspace(p + 1);
+ 	DEBUGVOL ("cAdvChCtrlChannel::Parse()  Name:<%s>", Name);     
+ 	p = strchr(Name, '=');
+ 	if (p)
+ 	{
+     	    *p = 0;
+-	    const char* Value = compactspace(p + 1);
++	    char* Value = compactspace(p + 1);
+ 	    // todo check if Name == "VOL"
+ 	    Volume = atoi(Value);
+ 	    DEBUGVOL ("cAdvChCtrlChannel::Parse Name <%s> Value:<%d>", Name, Volume);

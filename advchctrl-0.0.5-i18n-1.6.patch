@@ -1,0 +1,579 @@
+
+This is a semi-automatically created i18n adaptation patch and may contain
+errors (such as missing translations). This should only be used as a
+temporary measure until the upstream plugin maintainer fixes the plugin
+properly according to the instructions in i18n-to-gettext.pl.
+
+Created for Mandriva Linux packaging by Anssi Hannula <anssi@mandriva.org>.
+
+
+Index: advchctrl-0.0.5/Makefile
+===================================================================
+--- advchctrl-0.0.5/Makefile
++++ advchctrl-0.0.5/Makefile	2008-04-16 09:37:13.000000000 +0300
+@@ -46,7 +46,7 @@
+ 
+ ### The object files (add further files here):
+ 
+-OBJS = $(PLUGIN).o advchctrlchannel.o advchctrlsetup.o advchctrli18n.o advchctrlosd.o
++OBJS = $(PLUGIN).o advchctrlchannel.o advchctrlsetup.o  advchctrlosd.o
+ 
+ ### Implicit rules:
+ 
+@@ -62,9 +62,34 @@
+ 
+ -include $(DEPFILE)
+ 
++### Internationalization (I18N):
++
++PODIR     = po
++LOCALEDIR = $(VDRDIR)/locale
++I18Npo    = $(wildcard $(PODIR)/*.po)
++I18Nmsgs  = $(addprefix $(LOCALEDIR)/, $(addsuffix /LC_MESSAGES/vdr-$(PLUGIN).mo, $(notdir $(foreach file, $(I18Npo), $(basename $(file))))))
++I18Npot   = $(PODIR)/$(PLUGIN).pot
++
++%.mo: %.po
++	msgfmt -c -o $@ $<
++
++$(I18Npot): $(wildcard *.[ch]*)
++	xgettext -C -cTRANSLATORS --no-wrap --no-location -k -ktr -ktrNOOP --msgid-bugs-address='<http://qa.mandriva.com/>' -o $@ $^
++
++%.po: $(I18Npot)
++	msgmerge -U --no-wrap --no-location --backup=none -q $@ $<
++	@touch $@
++
++$(I18Nmsgs): $(LOCALEDIR)/%/LC_MESSAGES/vdr-$(PLUGIN).mo: $(PODIR)/%.mo
++	@mkdir -p $(dir $@)
++	cp $< $@
++
++.PHONY: i18n
++i18n: $(I18Nmsgs)
++
+ ### Targets:
+ 
+-all: libvdr-$(PLUGIN).so
++all: libvdr-$(PLUGIN).so i18n
+ 
+ libvdr-$(PLUGIN).so: $(OBJS)
+ 	$(CXX) $(CXXFLAGS) -shared $(OBJS) -o $@
+@@ -79,4 +104,5 @@
+ 	@echo Distribution package created as $(PACKAGE).tgz
+ 
+ clean:
++	@-rm -f $(PODIR)/*.mo $(PODIR)/*.pot
+ 	@-rm -f $(OBJS) $(DEPFILE) *.so *.tgz core* *~
+Index: advchctrl-0.0.5/advchctrl.c
+===================================================================
+--- advchctrl-0.0.5/advchctrl.c
++++ advchctrl-0.0.5/advchctrl.c	2008-04-16 09:37:13.000000000 +0300
+@@ -176,7 +176,7 @@
+ bool cPluginAdvChCtrl::Initialize(void)
+ {
+   // Initialize any background activities the plugin shall perform.
+-  RegisterI18n(Phrases);	// we want support other languages
++  	// we want support other languages
+   
+   return true;
+ }
+Index: advchctrl-0.0.5/advchctrl.h
+===================================================================
+--- advchctrl-0.0.5/advchctrl.h
++++ advchctrl-0.0.5/advchctrl.h	2008-04-16 09:37:13.000000000 +0300
+@@ -4,8 +4,8 @@
+ #include <vdr/plugin.h>
+ 
+ static const char *VERSION        = "0.0.5";
+-static const char *DESCRIPTION    = "Advanced Channel Control";
+-static const char *MAINMENUENTRY  = "Advanced Channel Control";
++static const char *DESCRIPTION    = trNOOP("Advanced Channel Control");
++static const char *MAINMENUENTRY  = trNOOP("Advanced Channel Control");
+ 
+ 
+ class cStatusAdvChCtrl : public cStatus {
+Index: advchctrl-0.0.5/po/advchctrl.pot
+===================================================================
+--- advchctrl-0.0.5/po/advchctrl.pot
++++ advchctrl-0.0.5/po/advchctrl.pot	2008-04-16 09:37:13.000000000 +0300
+@@ -0,0 +1,77 @@
++# SOME DESCRIPTIVE TITLE.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++#, fuzzy
++msgid ""
++msgstr ""
++"Project-Id-Version: PACKAGE VERSION\n"
++"Report-Msgid-Bugs-To: http://qa.mandriva.com/\n"
++"POT-Creation-Date: 2008-04-16 09:37+0300\n"
++"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
++"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
++"Language-Team: LANGUAGE <LL@li.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=CHARSET\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: advchctrl.h:7 advchctrl.h:8
++msgid "Advanced Channel Control"
++msgstr ""
++
++#: advchctrlosd.c:99 advchctrlsetup.c:54
++msgid "Default volume"
++msgstr ""
++
++#: advchctrlosd.c:100
++msgid "Channel volume"
++msgstr ""
++
++#: advchctrlosd.c:124
++msgid "Reset"
++msgstr ""
++
++#: advchctrlsetup.c:22
++msgid "Classic"
++msgstr ""
++
++#: advchctrlsetup.c:48
++msgid "Hide main menu entry"
++msgstr ""
++
++#: advchctrlsetup.c:48
++msgid "no"
++msgstr ""
++
++#: advchctrlsetup.c:48
++msgid "yes"
++msgstr ""
++
++#: advchctrlsetup.c:49
++msgid "Theme"
++msgstr ""
++
++#: advchctrlsetup.c:50
++msgid "OSD-Position"
++msgstr ""
++
++#: advchctrlsetup.c:50
++msgid "bottom"
++msgstr ""
++
++#: advchctrlsetup.c:50
++msgid "top"
++msgstr ""
++
++#: advchctrlsetup.c:51
++msgid "OSD-Height"
++msgstr ""
++
++#: advchctrlsetup.c:52
++msgid "OSD-Width"
++msgstr ""
++
++#: advchctrlsetup.c:53
++msgid "OSD-Horizontal offset"
++msgstr ""
+Index: advchctrl-0.0.5/po/de_DE.po
+===================================================================
+--- advchctrl-0.0.5/po/de_DE.po
++++ advchctrl-0.0.5/po/de_DE.po	2008-04-16 09:37:13.000000000 +0300
+@@ -0,0 +1,76 @@
++# VDR advchctrl plugin language source file.
++# Copyright (C) YEAR THE VDR-advchctrl'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the VDR-advchctrl package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: VDR-advchctrl\n"
++"Report-Msgid-Bugs-To: http://qa.mandriva.com/\n"
++"POT-Creation-Date: 2008-04-16 09:37+0300\n"
++"PO-Revision-Date: 2008-04-16 09:37+0300\n"
++"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
++"Language-Team: <vdr@linuxtv.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=ISO-8859-15\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: advchctrl.h:7 advchctrl.h:8
++msgid "Advanced Channel Control"
++msgstr "Erweiterte Kanal Funktionen"
++
++#: advchctrlosd.c:99 advchctrlsetup.c:54
++msgid "Default volume"
++msgstr "Standard Lautst�rke"
++
++#: advchctrlosd.c:100
++msgid "Channel volume"
++msgstr "Kanal Lautst�rke"
++
++#: advchctrlosd.c:124
++msgid "Reset"
++msgstr ""
++
++#: advchctrlsetup.c:22
++msgid "Classic"
++msgstr ""
++
++#: advchctrlsetup.c:48
++msgid "Hide main menu entry"
++msgstr "Hauptmen�eintrag verstecken"
++
++#: advchctrlsetup.c:48
++msgid "no"
++msgstr ""
++
++#: advchctrlsetup.c:48
++msgid "yes"
++msgstr ""
++
++#: advchctrlsetup.c:49
++msgid "Theme"
++msgstr ""
++
++#: advchctrlsetup.c:50
++msgid "OSD-Position"
++msgstr ""
++
++#: advchctrlsetup.c:50
++msgid "bottom"
++msgstr ""
++
++#: advchctrlsetup.c:50
++msgid "top"
++msgstr ""
++
++#: advchctrlsetup.c:51
++msgid "OSD-Height"
++msgstr ""
++
++#: advchctrlsetup.c:52
++msgid "OSD-Width"
++msgstr ""
++
++#: advchctrlsetup.c:53
++msgid "OSD-Horizontal offset"
++msgstr ""
+Index: advchctrl-0.0.5/po/et_EE.po
+===================================================================
+--- advchctrl-0.0.5/po/et_EE.po
++++ advchctrl-0.0.5/po/et_EE.po	2008-04-16 09:37:13.000000000 +0300
+@@ -0,0 +1,76 @@
++# VDR advchctrl plugin language source file.
++# Copyright (C) YEAR THE VDR-advchctrl'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the VDR-advchctrl package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: VDR-advchctrl\n"
++"Report-Msgid-Bugs-To: http://qa.mandriva.com/\n"
++"POT-Creation-Date: 2008-04-16 09:37+0300\n"
++"PO-Revision-Date: 2008-04-16 09:37+0300\n"
++"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
++"Language-Team: <vdr@linuxtv.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=ISO-8859-13\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: advchctrl.h:7 advchctrl.h:8
++msgid "Advanced Channel Control"
++msgstr ""
++
++#: advchctrlosd.c:99 advchctrlsetup.c:54
++msgid "Default volume"
++msgstr ""
++
++#: advchctrlosd.c:100
++msgid "Channel volume"
++msgstr ""
++
++#: advchctrlosd.c:124
++msgid "Reset"
++msgstr ""
++
++#: advchctrlsetup.c:22
++msgid "Classic"
++msgstr ""
++
++#: advchctrlsetup.c:48
++msgid "Hide main menu entry"
++msgstr "Peida valik peamen��s"
++
++#: advchctrlsetup.c:48
++msgid "no"
++msgstr ""
++
++#: advchctrlsetup.c:48
++msgid "yes"
++msgstr ""
++
++#: advchctrlsetup.c:49
++msgid "Theme"
++msgstr ""
++
++#: advchctrlsetup.c:50
++msgid "OSD-Position"
++msgstr ""
++
++#: advchctrlsetup.c:50
++msgid "bottom"
++msgstr ""
++
++#: advchctrlsetup.c:50
++msgid "top"
++msgstr ""
++
++#: advchctrlsetup.c:51
++msgid "OSD-Height"
++msgstr ""
++
++#: advchctrlsetup.c:52
++msgid "OSD-Width"
++msgstr ""
++
++#: advchctrlsetup.c:53
++msgid "OSD-Horizontal offset"
++msgstr ""
+Index: advchctrl-0.0.5/po/fi_FI.po
+===================================================================
+--- advchctrl-0.0.5/po/fi_FI.po
++++ advchctrl-0.0.5/po/fi_FI.po	2008-04-16 09:37:13.000000000 +0300
+@@ -0,0 +1,76 @@
++# VDR advchctrl plugin language source file.
++# Copyright (C) YEAR THE VDR-advchctrl'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the VDR-advchctrl package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: VDR-advchctrl\n"
++"Report-Msgid-Bugs-To: http://qa.mandriva.com/\n"
++"POT-Creation-Date: 2008-04-16 09:37+0300\n"
++"PO-Revision-Date: 2008-04-16 09:37+0300\n"
++"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
++"Language-Team: <vdr@linuxtv.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=ISO-8859-15\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: advchctrl.h:7 advchctrl.h:8
++msgid "Advanced Channel Control"
++msgstr ""
++
++#: advchctrlosd.c:99 advchctrlsetup.c:54
++msgid "Default volume"
++msgstr ""
++
++#: advchctrlosd.c:100
++msgid "Channel volume"
++msgstr ""
++
++#: advchctrlosd.c:124
++msgid "Reset"
++msgstr ""
++
++#: advchctrlsetup.c:22
++msgid "Classic"
++msgstr ""
++
++#: advchctrlsetup.c:48
++msgid "Hide main menu entry"
++msgstr "Piilota valinta p��valikosta"
++
++#: advchctrlsetup.c:48
++msgid "no"
++msgstr ""
++
++#: advchctrlsetup.c:48
++msgid "yes"
++msgstr ""
++
++#: advchctrlsetup.c:49
++msgid "Theme"
++msgstr ""
++
++#: advchctrlsetup.c:50
++msgid "OSD-Position"
++msgstr ""
++
++#: advchctrlsetup.c:50
++msgid "bottom"
++msgstr ""
++
++#: advchctrlsetup.c:50
++msgid "top"
++msgstr ""
++
++#: advchctrlsetup.c:51
++msgid "OSD-Height"
++msgstr ""
++
++#: advchctrlsetup.c:52
++msgid "OSD-Width"
++msgstr ""
++
++#: advchctrlsetup.c:53
++msgid "OSD-Horizontal offset"
++msgstr ""
+Index: advchctrl-0.0.5/po/it_IT.po
+===================================================================
+--- advchctrl-0.0.5/po/it_IT.po
++++ advchctrl-0.0.5/po/it_IT.po	2008-04-16 09:37:13.000000000 +0300
+@@ -0,0 +1,76 @@
++# VDR advchctrl plugin language source file.
++# Copyright (C) YEAR THE VDR-advchctrl'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the VDR-advchctrl package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: VDR-advchctrl\n"
++"Report-Msgid-Bugs-To: http://qa.mandriva.com/\n"
++"POT-Creation-Date: 2008-04-16 09:37+0300\n"
++"PO-Revision-Date: 2008-04-16 09:37+0300\n"
++"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
++"Language-Team: <vdr@linuxtv.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=ISO-8859-15\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: advchctrl.h:7 advchctrl.h:8
++msgid "Advanced Channel Control"
++msgstr ""
++
++#: advchctrlosd.c:99 advchctrlsetup.c:54
++msgid "Default volume"
++msgstr ""
++
++#: advchctrlosd.c:100
++msgid "Channel volume"
++msgstr ""
++
++#: advchctrlosd.c:124
++msgid "Reset"
++msgstr ""
++
++#: advchctrlsetup.c:22
++msgid "Classic"
++msgstr ""
++
++#: advchctrlsetup.c:48
++msgid "Hide main menu entry"
++msgstr "Nascondi voce men�"
++
++#: advchctrlsetup.c:48
++msgid "no"
++msgstr ""
++
++#: advchctrlsetup.c:48
++msgid "yes"
++msgstr ""
++
++#: advchctrlsetup.c:49
++msgid "Theme"
++msgstr ""
++
++#: advchctrlsetup.c:50
++msgid "OSD-Position"
++msgstr ""
++
++#: advchctrlsetup.c:50
++msgid "bottom"
++msgstr ""
++
++#: advchctrlsetup.c:50
++msgid "top"
++msgstr ""
++
++#: advchctrlsetup.c:51
++msgid "OSD-Height"
++msgstr ""
++
++#: advchctrlsetup.c:52
++msgid "OSD-Width"
++msgstr ""
++
++#: advchctrlsetup.c:53
++msgid "OSD-Horizontal offset"
++msgstr ""
+Index: advchctrl-0.0.5/po/ru_RU.po
+===================================================================
+--- advchctrl-0.0.5/po/ru_RU.po
++++ advchctrl-0.0.5/po/ru_RU.po	2008-04-16 09:37:13.000000000 +0300
+@@ -0,0 +1,76 @@
++# VDR advchctrl plugin language source file.
++# Copyright (C) YEAR THE VDR-advchctrl'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the VDR-advchctrl package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: VDR-advchctrl\n"
++"Report-Msgid-Bugs-To: http://qa.mandriva.com/\n"
++"POT-Creation-Date: 2008-04-16 09:37+0300\n"
++"PO-Revision-Date: 2008-04-16 09:37+0300\n"
++"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
++"Language-Team: <vdr@linuxtv.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=ISO-8859-5\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: advchctrl.h:7 advchctrl.h:8
++msgid "Advanced Channel Control"
++msgstr ""
++
++#: advchctrlosd.c:99 advchctrlsetup.c:54
++msgid "Default volume"
++msgstr ""
++
++#: advchctrlosd.c:100
++msgid "Channel volume"
++msgstr ""
++
++#: advchctrlosd.c:124
++msgid "Reset"
++msgstr ""
++
++#: advchctrlsetup.c:22
++msgid "Classic"
++msgstr ""
++
++#: advchctrlsetup.c:48
++msgid "Hide main menu entry"
++msgstr "������ ������� � ������� ����"
++
++#: advchctrlsetup.c:48
++msgid "no"
++msgstr ""
++
++#: advchctrlsetup.c:48
++msgid "yes"
++msgstr ""
++
++#: advchctrlsetup.c:49
++msgid "Theme"
++msgstr ""
++
++#: advchctrlsetup.c:50
++msgid "OSD-Position"
++msgstr ""
++
++#: advchctrlsetup.c:50
++msgid "bottom"
++msgstr ""
++
++#: advchctrlsetup.c:50
++msgid "top"
++msgstr ""
++
++#: advchctrlsetup.c:51
++msgid "OSD-Height"
++msgstr ""
++
++#: advchctrlsetup.c:52
++msgid "OSD-Width"
++msgstr ""
++
++#: advchctrlsetup.c:53
++msgid "OSD-Horizontal offset"
++msgstr ""

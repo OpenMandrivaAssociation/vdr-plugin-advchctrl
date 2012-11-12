@@ -1,0 +1,40 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 90_advchctrl-0.0.5-1.3.38.dpatch by Thomas Günther <tom@toms-cafe.de>
+## http://toms-cafe.de/vdr/download/advchctrl-0.0.5-1.3.38.diff
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Changes for VDR >= 1.3.38.
+
+@DPATCH@
+--- advchctrl-0.0.5/advchctrl.c
++++ advchctrl-0.0.5/advchctrl.c
+@@ -123,9 +123,15 @@
+     }    
+ }
+ 
++#if VDRVERSNUM >= 10338
++void cStatusAdvChCtrl::Replaying(const cControl *Control, const char *Name, const char *FileName, bool On)
++{
++    isInReplayMode = On;
++#else
+ void cStatusAdvChCtrl::Replaying(const cControl *Control, const char *Name)
+ {
+     isInReplayMode = (Name != NULL ? true : false);
++#endif
+     DEBUGVOL ("cStatusAdvChCtrl::Replaying <%s> <%s>", Name, (isInReplayMode ? "yes" : "no"));
+     if (!(ActualVolume == advchctrlConfig.defaultvolume) && isInReplayMode)
+     {
+--- advchctrl-0.0.5/advchctrl.h
++++ advchctrl-0.0.5/advchctrl.h
+@@ -16,7 +16,11 @@
+ protected:
+    virtual void ChannelSwitch (const cDevice *Device, int ChannelNumber);
+    virtual void SetVolume (int Volume, bool Absolute);
++#if VDRVERSNUM >= 10338
++   virtual void Replaying (const cControl *Control, const char *Name, const char *FileName, bool On);
++#else
+    virtual void Replaying (const cControl *Control, const char *Name);
++#endif
+ };
+ 
+ class cPluginAdvChCtrl : public cPlugin {

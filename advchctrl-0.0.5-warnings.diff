@@ -1,0 +1,69 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 02_advchctrl-0.0.5-warnings.dpatch by Thomas Günther <tom@toms-cafe.de>
+## http://toms-cafe.de/vdr/download/advchctrl-0.0.5-warnings.diff
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Prevent warnings.
+
+@DPATCH@
+--- advchctrl-0.0.5/advchctrlosd.c
++++ advchctrl-0.0.5/advchctrlosd.c
+@@ -69,14 +69,10 @@
+   cMutexLock lock(m_Mutex);
+   char buf1[128];
+   char buf2[128];
+-  int snr = 50 / 655;
+-  int signal = 140;
++//int signal = 140;
+   double barlength[2];
+   int 	TextLength[2];
+   int offset = 0;
+-  int x = OSDWIDTH - OSDCORNERING;
+-  int y = 0;
+-  int value = 0;
+   int TxtCol;
+ 
+   cChannel *channel = Channels.GetByNumber(cDevice::PrimaryDevice()->CurrentChannel());
+@@ -96,8 +92,8 @@
+ //	    m_Osd->DrawRectangle((OSDWIDTH-OSDCORNERING - 15), OSDSTATUSWIN_Y(0),(OSDWIDTH-OSDCORNERING-12), OSDSTATUSWIN_Y(offset+OSDROWHEIGHT-1), advchctrlTheme[advchctrlConfig.theme].clrTitleBackground);
+ //        }
+         offset += OSDROWHEIGHT + 15;
+-        snprintf(buf1, sizeof(buf1), "%s%", tr("Default volume"));
+-	snprintf(buf2, sizeof(buf2), "%s%", tr("Channel volume"));
++        snprintf(buf1, sizeof(buf1), "%s", tr("Default volume"));
++	snprintf(buf2, sizeof(buf2), "%s", tr("Channel volume"));
+ 	TextLength[0] = m_Font->Width(buf1);
+ 	TextLength[1] = m_Font->Width(buf2);
+ //	TxtCol = (advchctrlConfig.theme == eThemeSTTNG ? advchctrlTheme[advchctrlConfig.theme].clrTitleText: advchctrlTheme[advchctrlConfig.theme].clrInactiveText);
+@@ -121,9 +117,9 @@
+ //	m_Osd->DrawRectangle(OSDSTATUSWIN_X(0), OSDSTATUSWIN_Y(OSDSTATUSHEIGHT)-OSDROWHEIGHT, OSDSTATUSWIN_X(0), OSDSTATUSWIN_Y(OSDSTATUSHEIGHT), advchctrlTheme[advchctrlConfig.theme].clrRed);
+ 	m_Osd->DrawRectangle(OSDSTATUSWIN_X(0) + OSDWIDTH/4, OSDSTATUSWIN_Y(OSDSTATUSHEIGHT)-OSDROWHEIGHT, OSDSTATUSWIN_X(0) + (2 * OSDWIDTH/4), OSDSTATUSWIN_Y(OSDSTATUSHEIGHT), advchctrlTheme[advchctrlConfig.theme].clrGreen);
+ 	
+-        snprintf(buf1, sizeof(buf1), "%s%", tr("Reset"));
++        snprintf(buf1, sizeof(buf1), "%s", tr("Reset"));
+ 	TextLength[0] = m_Font->Width(buf1);
+-	m_Osd->DrawText(OSDSTATUSWIN_X(0) + (1.5 *OSDWIDTH/4)-TextLength[0]/2, OSDSTATUSWIN_Y(OSDSTATUSHEIGHT)-OSDROWHEIGHT, buf1, advchctrlTheme[advchctrlConfig.theme].clrTitleText, advchctrlTheme[advchctrlConfig.theme].clrGreen, m_Font);
++	m_Osd->DrawText(OSDSTATUSWIN_X(0) + int(1.5 *OSDWIDTH/4)-TextLength[0]/2, OSDSTATUSWIN_Y(OSDSTATUSHEIGHT)-OSDROWHEIGHT, buf1, advchctrlTheme[advchctrlConfig.theme].clrTitleText, advchctrlTheme[advchctrlConfig.theme].clrGreen, m_Font);
+ //	m_Osd->DrawRectangle(OSDSTATUSWIN_X(4), OSDSTATUSWIN_Y(OSDSTATUSHEIGHT)-OSDROWHEIGHT, OSDSTATUSWIN_X(5), OSDSTATUSWIN_Y(OSDSTATUSHEIGHT), advchctrlTheme[advchctrlConfig.theme].clrBlue);
+ 	
+ 	m_Osd->DrawEllipse(0, OSDSTATUSWIN_Y(OSDSTATUSHEIGHT-OSDCORNERING), OSDCORNERING, OSDSTATUSWIN_Y(OSDSTATUSHEIGHT), clrTransparent, -3);
+@@ -148,9 +144,6 @@
+ void cAdvChCtrlOsd::Show(void)
+ {
+     DEBUGOSD("%s()\n", __PRETTY_FUNCTION__);
+-    int apid[2] = {0, 0};
+-    int dpid[2] = {0, 0};
+-    char *dev = NULL;
+ 
+     m_Osd = cOsdProvider::NewOsd(((Setup.OSDWidth - OSDWIDTH) / 2) + Setup.OSDLeft + advchctrlConfig.osdoffset, ((Setup.OSDHeight - OSDHEIGHT) / 2) + Setup.OSDTop);
+     if (m_Osd) {
+@@ -173,9 +166,6 @@
+ void cAdvChCtrlOsd::ChannelSwitch(const cDevice * device, int channelNumber)
+ {
+     DEBUGOSD("%s(%d,%d)\n", __PRETTY_FUNCTION__, device->DeviceNumber(), channelNumber);
+-    int apid[2] = {0, 0};
+-    int dpid[2] = {0, 0};
+-    char *dev = NULL;
+ 
+     if (!device->IsPrimaryDevice() || !channelNumber || cDevice::PrimaryDevice()->CurrentChannel() != channelNumber)
+ 	return;
