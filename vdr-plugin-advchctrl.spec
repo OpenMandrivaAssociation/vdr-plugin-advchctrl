@@ -1,13 +1,9 @@
-
 %define plugin	advchctrl
-%define name	vdr-plugin-%plugin
-%define version	0.0.5
-%define rel	19
 
 Summary:	VDR plugin: Advanced Channel Control
-Name:		%name
-Version:	%version
-Release:	%mkrel %rel
+Name:		vdr-plugin-%plugin
+Version:	0.0.5
+Release:	20
 Group:		Video
 License:	GPL
 URL:		http://www.vdr-wiki.de/wiki/index.php/Advchctrl-plugin
@@ -16,7 +12,6 @@ Patch1:		advchctrl-0.0.5-1.3.38.diff
 Patch2:		advchctrl-0.0.5-warnings.diff
 Patch3:		advchctrl-0.0.5-i18n-1.6.patch
 Patch4:		advchctrl-0.0.5-gcc44.patch
-BuildRoot:	%{_tmppath}/%{name}-buildroot
 BuildRequires:	vdr-devel >= 1.6.0
 Requires:	vdr-abi = %vdr_abi
 
@@ -37,17 +32,7 @@ of the plugin you can set the default volume.
 %vdr_plugin_build
 
 %install
-rm -rf %{buildroot}
 %vdr_plugin_install
-
-%clean
-rm -rf %{buildroot}
-
-%post
-%vdr_plugin_post %plugin
-
-%postun
-%vdr_plugin_postun %plugin
 
 %files -f %plugin.vdr
 %defattr(-,root,root)
