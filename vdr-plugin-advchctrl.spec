@@ -3,7 +3,7 @@
 Summary:	VDR plugin: Advanced Channel Control
 Name:		vdr-plugin-%plugin
 Version:	0.0.5
-Release:	20
+Release:	21
 Group:		Video
 License:	GPL
 URL:		http://www.vdr-wiki.de/wiki/index.php/Advchctrl-plugin
