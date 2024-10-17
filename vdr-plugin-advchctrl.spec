@@ -6,7 +6,7 @@ Version:	0.0.5
 Release:	22
 Group:		Video
 License:	GPL
-URL:		http://www.vdr-wiki.de/wiki/index.php/Advchctrl-plugin
+URL:		https://www.vdr-wiki.de/wiki/index.php/Advchctrl-plugin
 Source:		vdr-%plugin-%version.tar.bz2
 Patch1:		advchctrl-0.0.5-1.3.38.diff
 Patch2:		advchctrl-0.0.5-warnings.diff
